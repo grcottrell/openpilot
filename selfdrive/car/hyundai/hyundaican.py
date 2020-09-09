@@ -70,7 +70,8 @@ def create_clu11(packer, frame, bus, clu11, button, speed):
     values["CF_Clu_Vanz"] = speed
   else:
     values["CF_Clu_Vanz"] = speed
-  values["CF_Clu_AliveCnt1"] = frame % 0x10
+  if bus != 2:
+    values["CF_Clu_AliveCnt1"] = frame % 0x10
   return packer.make_can_msg("CLU11", bus, values)
 
 
@@ -92,3 +93,57 @@ def create_lfa_mfa(packer, frame, enabled):
   # HDA_USM: nothing
 
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
+
+def create_scc11(packer, enabled, set_speed, lead_visible, gapsetting, standstill, scc11, oplong, nosccradar, frame):
+  values = scc11
+
+  if oplong:
+    if enabled:
+      values["VSetDis"] = set_speed
+    if standstill:
+      values["SCCInfoDisplay"] = 0
+    values["DriverAlertDisplay"] = 0
+    values["TauGapSet"] = gapsetting
+    values["ObjValid"] = lead_visible
+    values["ACC_ObjStatus"] = lead_visible
+
+    if nosccradar:
+      values["MainMode_ACC"] = 1
+      values["AliveCounterACC"] = frame % 0x10
+  elif nosccradar:
+    values["AliveCounterACC"] = frame % 0x10
+
+  return packer.make_can_msg("SCC11", 0, values)
+
+def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, scc12, oplong, nosccradar, frame):
+  values = scc12
+
+  if oplong:
+    if enabled and (not accpause) and cruise_on:
+      values["ACCMode"] = 1
+      if apply_accel < 0:
+        values["StopReq"] = standstill
+    else:
+      values["ACCMode"] = 0
+
+    if enabled and cruise_on:
+      values["aReqRaw"] = apply_accel
+      values["aReqValue"] = apply_accel
+    else:
+      values["aReqRaw"] = 0
+      values["aReqValue"] = 0
+
+    if nosccradar:
+      values["CR_VSM_Alive"] = frame % 0x10
+      values["ACCMode"] = 1 if enabled else 0
+
+    values["CR_VSM_ChkSum"] = 0
+    dat = packer.make_can_msg("SCC12", 0, values)[2]
+    values["CR_VSM_ChkSum"] = 16 - sum([sum(divmod(i, 16)) for i in dat]) % 16
+  elif nosccradar:
+    values["CR_VSM_Alive"] = frame % 0x10
+    values["CR_VSM_ChkSum"] = 0
+    dat = packer.make_can_msg("SCC12", 0, values)[2]
+    values["CR_VSM_ChkSum"] = 16 - sum([sum(divmod(i, 16)) for i in dat]) % 16
+
+  return packer.make_can_msg("SCC12", 0, values)
