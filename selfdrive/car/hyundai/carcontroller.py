@@ -199,7 +199,7 @@ class CarController():
 
       can_sends.append(create_scc12(self.packer, apply_accel, enabled,
                                     self.acc_standstill, self.acc_paused,
-                                    CS.out.cruiseMainbutton,
+                                    CS.cruise_main_button,
                                     CS.scc12, self.longcontrol, self.nosccradar, frame))
 
     # 20 Hz LFA MFA message
