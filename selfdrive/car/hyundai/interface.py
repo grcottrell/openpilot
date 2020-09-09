@@ -225,11 +225,11 @@ class CarInterface(CarInterfaceBase):
     events = self.create_common_events(ret)
 
     self.CP.enableCruise = (not self.CP.openpilotLongitudinalControl) or (not self.CC.longcontrol)
-    if self.CS.brakeHold:
+    if self.CS.brakeHold and self.CC.longcontrol:
       events.add(EventName.brakeHold)
-    if self.CS.parkBrake:
+    if self.CS.parkBrake and self.CC.longcontrol:
       events.add(EventName.parkBrake)
-    if self.CS.brakeUnavailable:
+    if self.CS.brakeUnavailable and self.CC.longcontrol:
       events.add(EventName.brakeUnavailable)
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
