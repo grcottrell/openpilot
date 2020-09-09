@@ -229,6 +229,8 @@ class CarInterface(CarInterfaceBase):
       events.add(EventName.brakeHold)
     if self.CS.parkBrake:
       events.add(EventName.parkBrake)
+    if self.CS.brakeUnavailable:
+      events.add(EventName.brakeUnavailable)
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
     if ret.vEgo < (self.CP.minSteerSpeed + 2.) and self.CP.minSteerSpeed > 10.:

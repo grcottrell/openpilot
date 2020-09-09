@@ -25,6 +25,8 @@ class CarState(CarStateBase):
     self.radar_obj_valid = 0.
     self.vrelative = 0.
     self.prev_cruise_buttons = 0
+    self.cancel_button_count = 0
+    self.timer = 0
 
   def update(self, cp, cp2, cp_cam):
     cp_mdps = cp2 if self.mdpsHarness else cp
@@ -32,6 +34,7 @@ class CarState(CarStateBase):
     cp_scc = cp_cam if ((self.scc_bus == 2) or self.noSccRadar) else cp
 
     self.prev_cruise_buttons = self.cruise_buttons
+    self.prev_cruise_main_button = self.cruise_main_button
 
     ret = car.CarState.new_message()
 
@@ -63,6 +66,20 @@ class CarState(CarStateBase):
 
     self.cruise_main_button = cp.vl["CLU11"]["CF_Clu_CruiseSwMain"]
     self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
+
+    if not self.cruise_main_button:
+      if self.cruise_buttons == 4 and self.prev_cruise_buttons != 4 and self.cancel_button_count < 3:
+        self.cancel_button_count += 1
+        self.timer = 100
+      elif self.cancel_button_count == 3:
+          self.cancel_button_count = 0
+      if self.timer <= 100 and self.cancel_button_count:
+        self.timer = max(0, self.timer - 1)
+        if self.timer == 0:
+          self.cancel_button_count = 0
+    else:
+      self.cancel_button_count = 0
+
 
     # cruise state
     if self.noSccRadar:
