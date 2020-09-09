@@ -29,7 +29,7 @@ class CarState(CarStateBase):
   def update(self, cp, cp2, cp_cam):
     cp_mdps = cp2 if self.mdpsHarness else cp
     cp_sas = cp2 if self.sas_bus else cp
-    cp_scc = cp_cam if self.scc_bus == 2 else cp
+    cp_scc = cp_cam if ((self.scc_bus == 2) or self.noSccRadar) else cp
 
     self.prev_cruise_buttons = self.cruise_buttons
 
@@ -72,11 +72,11 @@ class CarState(CarStateBase):
       ret.cruiseState.enabled = (ret.cruiseState.available != False)
     else:
       ret.cruiseState.available = True
-      ret.cruiseState.enabled = cp.vl["SCC12"]['ACCMode'] != 0
-      ret.cruiseState.standstill = cp.vl["SCC11"]['SCCInfoDisplay'] == 4.
-      self.lead_distance = cp.vl["SCC11"]['ACC_ObjDist']
-      self.vrelative = cp.vl["SCC11"]['ACC_ObjRelSpd']
-      self.radar_obj_valid = cp.vl["SCC11"]['ACC_ObjStatus']
+      ret.cruiseState.enabled = cp_scc.vl["SCC12"]['ACCMode'] != 0
+      ret.cruiseState.standstill = cp_scc.vl["SCC11"]['SCCInfoDisplay'] == 4.
+      self.lead_distance = cp_scc.vl["SCC11"]['ACC_ObjDist']
+      self.vrelative = cp_scc.vl["SCC11"]['ACC_ObjRelSpd']
+      self.radar_obj_valid = cp_scc.vl["SCC11"]['ACC_ObjStatus']
 
 
     self.is_set_speed_in_mph = int(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"])
@@ -85,7 +85,7 @@ class CarState(CarStateBase):
       if self.noSccRadar:
         ret.cruiseState.speed = cp.vl["LVR12"]["CF_Lvr_CruiseSet"] * speed_conv
       else:
-        ret.cruiseState.speed = cp.vl["SCC11"]['VSetDis'] * speed_conv
+        ret.cruiseState.speed = cp_scc.vl["SCC11"]['VSetDis'] * speed_conv
     else:
       ret.cruiseState.speed = 0
 
@@ -166,8 +166,8 @@ class CarState(CarStateBase):
       ret.stockAeb = cp.vl["FCA11"]['FCA_CmdAct'] != 0
       ret.stockFcw = cp.vl["FCA11"]['CF_VSM_Warn'] == 2
     else:
-      ret.stockAeb = cp.vl["SCC12"]['AEB_CmdAct'] != 0
-      ret.stockFcw = cp.vl["SCC12"]['CF_VSM_Warn'] == 2
+      ret.stockAeb = cp_scc.vl["SCC12"]['AEB_CmdAct'] != 0
+      ret.stockFcw = cp_scc.vl["SCC12"]['CF_VSM_Warn'] == 2
 
     if self.CP.bsmAvailable:
       ret.leftBlindspot = cp.vl["LCA11"]["CF_Lca_IndLeft"] != 0
@@ -350,7 +350,7 @@ class CarState(CarStateBase):
         ("CF_VSM_Warn", "FCA11", 0),
       ]
       checks += [("FCA11", 50)]
-    else:
+    elif not CP.radarOffCan and CP.sccBus == 0:
       signals += [
         ("AEB_CmdAct", "SCC12", 0),
         ("CF_VSM_Warn", "SCC12", 0),
@@ -416,7 +416,7 @@ class CarState(CarStateBase):
     checks = [
       ("LKAS11", 100)
     ]
-    if CP.sccBus == 2:
+    if CP.sccBus == 2 or CP.radarOffCan:
       signals += [
         ("MainMode_ACC", "SCC11", 0),
         ("SCCInfoDisplay", "SCC11", 0),
@@ -462,4 +462,16 @@ class CarState(CarStateBase):
           ("SCC11", 50),
           ("SCC12", 50),
         ]
+      if not CP.radarOffCan:
+        if CP.fcaAvailable:
+          signals += [
+          ("FCA_CmdAct", "FCA11", 0),
+          ("CF_VSM_Warn", "FCA11", 0),
+          ]
+          checks += [("FCA11", 50)]
+        else:
+          signals += [
+          ("AEB_CmdAct", "SCC12", 0),
+          ("CF_VSM_Warn", "SCC12", 0),
+          ]
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
