@@ -59,7 +59,8 @@ class CarState(CarStateBase):
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
     ret.steerWarning = cp_mdps.vl["MDPS12"]['CF_Mdps_ToiUnavail'] != 0
 
-    ret.brakeHold = (cp.vl["ESP11"]['AVH_STAT'] == 1)
+    self.brakeHold = (cp.vl["ESP11"]['AVH_STAT'] == 1)
+
     self.cruise_main_button = cp.vl["CLU11"]["CF_Clu_CruiseSwMain"]
     self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
 
@@ -107,7 +108,7 @@ class CarState(CarStateBase):
 
     ret.espDisabled = (cp.vl["TCS15"]['ESC_Off_Step'] != 0)
 
-    ret.parkBrake = (cp.vl["CGW1"]['CF_Gway_ParkBrakeSw'] != 0)
+    self.parkBrake = (cp.vl["CGW1"]['CF_Gway_ParkBrakeSw'] != 0)
 
     # TODO: refactor gear parsing in function
     # Gear Selection via Cluster - For those Kia/Hyundai which are not fully discovered, we can use the Cluster Indicator for Gear Selection,
