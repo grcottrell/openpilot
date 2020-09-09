@@ -90,34 +90,6 @@ static uint8_t hyundai_community_compute_checksum(CAN_FIFOMailBox_TypeDef *to_pu
 static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   bool valid;
-
-  int addr = GET_ADDR(to_push);
-  int bus = GET_BUS(to_push);
-
-  // check if we have a LCAN or MDPS on Bus1
-  if (bus == 1) {
-    if ((addr != 593 || addr != 897 || addr != 688)) {
-      hyundai_community_mdps_harness_present = false;
-      hyundai_community_lcan_on_bus1 = true;
-    }
-    else if ((addr == 593 || addr == 897) && (!hyundai_community_lcan_on_bus1)) {
-      hyundai_community_mdps_harness_present = true;
-      hyundai_community_lcan_on_bus1 = false;
-    }
-  }
-  // check if we have a SCC
-
-  if (addr == 1057) {
-    hyundai_community_non_scc_car = false;
-    if (bus == 2) {
-      hyundai_community_radar_harness_present = true;
-    }
-    else {
-      hyundai_community_radar_harness_present = false;
-    }
-  }
-  hyundai_community_mdps_harness_present = true;
-  
   if (hyundai_community_non_scc_car) {
     valid = addr_safety_check(to_push, hyundai_community_nonscc_rx_checks, HYUNDAI_COMMUNITY_NONSCC_RX_CHECK_LEN,
                             hyundai_community_get_checksum, hyundai_community_compute_checksum,
@@ -128,6 +100,8 @@ static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
                             hyundai_community_get_checksum, hyundai_community_compute_checksum,
                             hyundai_community_get_counter);
   }
+  int addr = GET_ADDR(to_push);
+  int bus = GET_BUS(to_push);
 
   if ((bus == 1) && hyundai_community_mdps_harness_present) {
 
