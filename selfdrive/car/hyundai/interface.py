@@ -224,7 +224,7 @@ class CarInterface(CarInterfaceBase):
 
     events = self.create_common_events(ret)
 
-    ret.enableCruise = (not ret.openpilotLongitudinalControl) or (not self.CC.longcontrol)
+    ret.enableCruise = (not self.CP.openpilotLongitudinalControl) or (not self.CC.longcontrol)
     ret.brakeHold = self.CS.brakeHold != 0
     ret.parkBrake = self.CS.parkBrake != 0
 
