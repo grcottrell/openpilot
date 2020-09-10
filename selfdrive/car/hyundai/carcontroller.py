@@ -132,7 +132,7 @@ class CarController():
       process_hud_alert(enabled, self.car_fingerprint, visual_alert,
                         left_lane, right_lane, left_lane_depart, right_lane_depart)
 
-    speed_conv = CV.MS_TO_MPH if CS.is_set_speed_in_mph else speed_conv = CV.MS_TO_KPH
+    speed_conv = CV.MS_TO_MPH if CS.is_set_speed_in_mph else CV.MS_TO_KPH
 
     clu11_speed = CS.clu11["CF_Clu_Vanz"]
 
