@@ -68,6 +68,7 @@ class CarController():
     self.lfainFingerprint = CP.lfaAvailable
     self.vdiff = 0
     self.scc12cnt = 0
+    self.delaycanel = 0
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible):
@@ -161,13 +162,16 @@ class CarController():
 
     if pcm_cancel_cmd and not CS.nosccradar and self.usestockscc and CS.scc12["ACCMode"]:
       self.vdiff = 0.
-      can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, self.current_veh_speed))
+      self.delaycanel += 1
+      if self.delaycanel > 100:
+        can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, self.current_veh_speed))
     elif CS.out.cruiseState.standstill and not CS.nosccradar and self.usestockscc and CS.vrelative > 0:
       self.vdiff += (CS.vrelative - self.vdiff)
       if self.vdiff > 1. or CS.lead_distance > 8.:
         can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.RES_ACCEL, self.current_veh_speed))
     else:
       self.vdiff = 0.
+      self.delaycanel = 0
 
     self.acc_standstill = False #True if (enabled and not self.acc_paused and CS.out.standstill) else False
 
@@ -181,7 +185,7 @@ class CarController():
                                     CS.out.standstill, CS.scc11, self.usestockscc, CS.nosccradar, frame))
 
       can_sends.append(create_scc12(self.packer, apply_accel, enabled,
-                                    self.acc_standstill,
+                                    self.acc_standstill, CS.out.gasPressed,
                                     CS.scc11["MainMode_ACC"],
                                     CS.scc12, self.usestockscc, CS.nosccradar, self.scc12cnt))
 

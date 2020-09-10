@@ -91,9 +91,9 @@ class CarState(CarStateBase):
       ret.cruiseState.enabled = (ret.cruiseState.available != False)
     else:
       ret.cruiseState.available = (cp_scc.vl["SCC11"]["MainMode_ACC"] != 0)
-      if ret.cruiseState.available and self.enableCruise and (self.cruise_buttons == 1 or self.cruise_buttons == 2):
+      if ret.cruiseState.available and not self.enableCruise and (self.cruise_buttons == 1 or self.cruise_buttons == 2):
         self.allow_enable = True
-      elif not self.enableCruise:
+      elif self.enableCruise:
         self.allow_enable = False
       ret.cruiseState.enabled = (cp_scc.vl["SCC12"]['ACCMode'] != 0) or (self.allow_enable != 0)
       ret.cruiseState.standstill = cp_scc.vl["SCC11"]['SCCInfoDisplay'] == 4.
