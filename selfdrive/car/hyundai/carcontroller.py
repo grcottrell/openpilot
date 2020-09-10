@@ -68,7 +68,8 @@ class CarController():
     self.lfainFingerprint = CP.lfaAvailable
     self.vdiff = 0
     self.scc12cnt = 0
-    self.delaycanel = 0
+    self.resumebuttoncnt = 0
+    self.lastresumeframe = 0
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible):
@@ -162,16 +163,19 @@ class CarController():
 
     if pcm_cancel_cmd and not CS.nosccradar and self.usestockscc and CS.scc12["ACCMode"]:
       self.vdiff = 0.
-      self.delaycanel += 1
-      if self.delaycanel > 100:
-        can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, self.current_veh_speed))
+      self.resumebuttoncnt = 0
+      can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, self.current_veh_speed))
     elif CS.out.cruiseState.standstill and not CS.nosccradar and self.usestockscc and CS.vrelative > 0:
       self.vdiff += (CS.vrelative - self.vdiff)
-      if self.vdiff > 1. or CS.lead_distance > 8.:
+      if (frame - self.lastresumeframe > 10) and (self.vdiff > .5 or CS.lead_distance > 6.):
         can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.RES_ACCEL, self.current_veh_speed))
+        self.resumebuttoncnt += 1
+        if self.resumebuttoncnt > 5:
+          self.lastresumeframe = frame
+          self.resumebuttoncnt = 0
     else:
       self.vdiff = 0.
-      self.delaycanel = 0
+      self.resumebuttoncnt = 0
 
     self.acc_standstill = False #True if (enabled and not self.acc_paused and CS.out.standstill) else False
 
