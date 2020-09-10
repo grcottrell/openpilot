@@ -178,7 +178,7 @@ class CarController():
     set_speed *= speed_conv
 
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-    if (CS.scc_bus == 2 or self.longcontrol): 
+    if (CS.scc_bus == 2 or self.longcontrol) and frame % 2 == 0: 
       can_sends.append(create_scc11(self.packer, enabled,
                                     set_speed, self.lead_visible,
                                     self.gapsettingdance,
