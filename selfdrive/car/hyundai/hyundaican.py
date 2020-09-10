@@ -109,13 +109,13 @@ def create_scc11(packer, enabled, set_speed, lead_visible, gapsetting, standstil
 
     if nosccradar:
       values["MainMode_ACC"] = 1
-      values["AliveCounterACC"] = frame % 0x10
+      values["AliveCounterACC"] = frame // 2 % 0x10
   elif nosccradar:
-    values["AliveCounterACC"] = frame % 0x10
+    values["AliveCounterACC"] = frame // 2 % 0x10
 
   return packer.make_can_msg("SCC11", 0, values)
 
-def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, scc12, oplong, nosccradar, frame):
+def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, scc12, oplong, nosccradar, cnt):
   values = scc12
 
   if oplong:
@@ -134,14 +134,14 @@ def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, 
       values["aReqValue"] = 0
 
     if nosccradar:
-      values["CR_VSM_Alive"] = frame % 0x10
+      values["CR_VSM_Alive"] = cnt
       values["ACCMode"] = 1 if enabled else 0
 
     values["CR_VSM_ChkSum"] = 0
     dat = packer.make_can_msg("SCC12", 0, values)[2]
     values["CR_VSM_ChkSum"] = 16 - sum([sum(divmod(i, 16)) for i in dat]) % 16
   elif nosccradar:
-    values["CR_VSM_Alive"] = frame % 0x10
+    values["CR_VSM_Alive"] = cnt
     values["CR_VSM_ChkSum"] = 0
     dat = packer.make_can_msg("SCC12", 0, values)[2]
     values["CR_VSM_ChkSum"] = 16 - sum([sum(divmod(i, 16)) for i in dat]) % 16

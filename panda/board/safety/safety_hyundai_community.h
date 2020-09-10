@@ -24,7 +24,7 @@ AddrCheckStruct hyundai_community_rx_checks[] = {
            {881, 0, 8, .expected_timestep = 10000U}}},
   {.msg = {{902, 0, 8, .expected_timestep = 10000U}}},
   {.msg = {{916, 0, 8, .expected_timestep = 10000U}}},
-  {.msg = {{1057, 2, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
+  {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
 };
 const int HYUNDAI_COMMUNITY_RX_CHECK_LEN = sizeof(hyundai_community_rx_checks) / sizeof(hyundai_community_rx_checks[0]);
 
@@ -90,7 +90,7 @@ static uint8_t hyundai_community_compute_checksum(CAN_FIFOMailBox_TypeDef *to_pu
 static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   bool valid;
-  if (hyundai_community_non_scc_car) {
+  if (hyundai_community_non_scc_car || hyundai_community_radar_harness_present) {
     valid = addr_safety_check(to_push, hyundai_community_nonscc_rx_checks, HYUNDAI_COMMUNITY_NONSCC_RX_CHECK_LEN,
                             hyundai_community_get_checksum, hyundai_community_compute_checksum,
                             hyundai_community_get_counter);
@@ -134,7 +134,7 @@ static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
 
     // engage for non ACC car
-    if ((addr == 1265) && ((hyundai_community_non_scc_car) || (hyundai_community_radar_harness_present))) {
+    if ((addr == 1265) && (hyundai_community_non_scc_car || hyundai_community_radar_harness_present)) {
       // first byte
       int cruise_engaged = (GET_BYTES_04(to_push) & 0x7);
       // enable on res+ or set- buttons rising edge
@@ -230,7 +230,7 @@ static int hyundai_community_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
     }
 
     if (violation) {
-     // tx = 0;
+      tx = 0;
     }
   }
 

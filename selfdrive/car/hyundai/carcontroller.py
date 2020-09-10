@@ -72,6 +72,7 @@ class CarController():
     self.lfainFingerprint = CP.lfaAvailable
     self.vdiff = 0
     self.nosccradar = CP.radarOffCan
+    self.scc12cnt = 0
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible):
@@ -149,6 +150,8 @@ class CarController():
       enabled_speed = clu11_speed
     else:
       self.current_veh_speed = int(CS.out.vEgo * speed_conv)
+
+    self.scc12cnt %= 0xF
     can_sends = []
 
     can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
@@ -191,7 +194,7 @@ class CarController():
     set_speed *= speed_conv
 
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-    if CS.scc_bus == 2 or self.longcontrol:
+    if (CS.scc_bus == 2 or self.longcontrol) and frame % 2 == 0: 
       can_sends.append(create_scc11(self.packer, enabled,
                                     set_speed, self.lead_visible,
                                     self.gapsettingdance,
@@ -200,7 +203,7 @@ class CarController():
       can_sends.append(create_scc12(self.packer, apply_accel, enabled,
                                     self.acc_standstill, self.acc_paused,
                                     CS.cruise_main_button,
-                                    CS.scc12, self.longcontrol, self.nosccradar, frame))
+                                    CS.scc12, self.longcontrol, self.nosccradar, self.scc12cnt))
 
     # 20 Hz LFA MFA message
     if frame % 5 == 0 and self.lfa_available:
