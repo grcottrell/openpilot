@@ -15,7 +15,7 @@ class CarState(CarStateBase):
     #Auto detection for setup
     self.mdpsHarness = CP.mdpsHarness
     self.sas_bus = CP.sasBus
-    self.noSccRadar = CP.radarOffCan
+    self.nosccradar = CP.radarOffCan
     self.scc_bus = CP.sccBus
     self.enableCruise = CP.enableCruise
     self.cruise_main_button = 0
@@ -33,7 +33,7 @@ class CarState(CarStateBase):
   def update(self, cp, cp2, cp_cam):
     cp_mdps = cp2 if self.mdpsHarness else cp
     cp_sas = cp2 if self.sas_bus else cp
-    cp_scc = cp_cam if ((self.scc_bus == 2) or self.noSccRadar) else cp
+    cp_scc = cp_cam if ((self.scc_bus == 2) or self.nosccradar) else cp
 
     self.prev_cruise_buttons = self.cruise_buttons
     self.prev_cruise_main_button = self.cruise_main_button
@@ -84,7 +84,7 @@ class CarState(CarStateBase):
 
 
     # cruise state
-    if self.noSccRadar:
+    if self.nosccradar:
       if self.cruise_buttons == 1 or self.cruise_buttons == 2:
         self.allow_nonscc_available = True
       ret.cruiseState.available = (self.allow_nonscc_available != False)
@@ -104,7 +104,7 @@ class CarState(CarStateBase):
     self.is_set_speed_in_mph = int(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"])
     if ret.cruiseState.enabled:
       speed_conv = CV.MPH_TO_MS if self.is_set_speed_in_mph else CV.KPH_TO_MS
-      if self.noSccRadar:
+      if self.nosccradar:
         ret.cruiseState.speed = cp.vl["LVR12"]["CF_Lvr_CruiseSet"] * speed_conv
       else:
         ret.cruiseState.speed = cp_scc.vl["SCC11"]['VSetDis'] * speed_conv
