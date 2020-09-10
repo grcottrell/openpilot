@@ -121,7 +121,7 @@ static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
 
     // enter controls on rising edge of ACC, exit controls on ACC off
-    if ((addr == 1057) && (!hyundai_community_non_scc_car)){
+    if ((addr == 1057) && (!hyundai_community_non_scc_car) && (!hyundai_community_radar_harness_present)){
       // 2 bits: 13-14
       int cruise_engaged = (GET_BYTES_04(to_push) >> 13) & 0x3;
       if (cruise_engaged && !cruise_engaged_prev) {
