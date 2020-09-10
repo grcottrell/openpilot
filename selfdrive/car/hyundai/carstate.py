@@ -126,7 +126,7 @@ class CarState(CarStateBase):
     else:
       ret.gas = cp.vl["EMS12"]['PV_AV_CAN'] / 100
 
-    ret.gasPressed = (cp.vl["TCS13"]["DriverOverride"] == 1) or (ret.gas > 0.)
+    ret.gasPressed = (cp.vl["TCS13"]["DriverOverride"] == 1) # or (ret.gas > 0.)
 
     ret.espDisabled = (cp.vl["TCS15"]['ESC_Off_Step'] != 0)
 
