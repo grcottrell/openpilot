@@ -193,7 +193,7 @@ class CarInterface(CarInterfaceBase):
 
     if ret.mdpsHarness:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity
-    if ret.radarOffCan:
+    if ret.radarOffCan or ret.sccBus == 2:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunityNonscc
 
     if ret.mdpsHarness:

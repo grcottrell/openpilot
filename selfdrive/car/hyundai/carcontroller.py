@@ -111,7 +111,7 @@ class CarController():
 
     if self.nosccradar:
       self.longcontrol = self.cp_oplongcontrol
-    elif (CS.cancel_button_count == 3) and not CS.brakeUnavailable and self.cp_oplongcontrol:
+    elif (CS.cancel_button_count == 3) and self.cp_oplongcontrol:# and not CS.brakeUnavailable:
       self.longcontrol = not self.longcontrol
 
     if self.longcontrol:

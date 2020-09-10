@@ -24,7 +24,7 @@ AddrCheckStruct hyundai_community_rx_checks[] = {
            {881, 0, 8, .expected_timestep = 10000U}}},
   {.msg = {{902, 0, 8, .expected_timestep = 10000U}}},
   {.msg = {{916, 0, 8, .expected_timestep = 10000U}}},
- // {.msg = {{1057, 2, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
+  {.msg = {{1057, 2, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
 };
 const int HYUNDAI_COMMUNITY_RX_CHECK_LEN = sizeof(hyundai_community_rx_checks) / sizeof(hyundai_community_rx_checks[0]);
 
@@ -134,7 +134,7 @@ static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
 
     // engage for non ACC car
-    if ((addr == 1265) && (hyundai_community_non_scc_car)) {
+    if ((addr == 1265) && ((hyundai_community_non_scc_car) || (hyundai_community_radar_harness_present))) {
       // first byte
       int cruise_engaged = (GET_BYTES_04(to_push) & 0x7);
       // enable on res+ or set- buttons rising edge
@@ -170,21 +170,6 @@ static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
     generic_rx_checks((addr == 832));
   }
-
-  if (valid && (bus == 2) && hyundai_community_radar_harness_present && (addr == 1057)) {
-
-    // enter controls on rising edge of ACC, exit controls on ACC off
-      // 2 bits: 13-14
-    int cruise_engaged = GET_BYTES_04(to_push) & 0x1; // ACC main_on signal
-    if (cruise_engaged && !cruise_engaged_prev) {
-      controls_allowed = 1;
-    }
-    if (!cruise_engaged) {
-      controls_allowed = 0;
-    }
-    cruise_engaged_prev = cruise_engaged;
-  }
-
   return valid;
 }
 
