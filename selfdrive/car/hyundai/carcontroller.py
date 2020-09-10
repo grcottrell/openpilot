@@ -64,9 +64,6 @@ class CarController():
     self.apply_accel_last = 0
     self.gapsettingdance = 2
     self.gapcount = 0
-    self.acc_paused_due_brake = False
-    self.acc_paused = False
-    self.prev_acc_paused_due_brake = False
     self.current_veh_speed = 0
     self.lfainFingerprint = CP.lfaAvailable
     self.vdiff = 0
@@ -181,7 +178,7 @@ class CarController():
     set_speed *= speed_conv
 
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-    if (CS.scc_bus == 2 or self.longcontrol) and frame % 2 == 0: 
+    if (CS.scc_bus == 2 or self.longcontrol): 
       can_sends.append(create_scc11(self.packer, enabled,
                                     set_speed, self.lead_visible,
                                     self.gapsettingdance,
