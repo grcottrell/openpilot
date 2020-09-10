@@ -115,11 +115,11 @@ def create_scc11(packer, enabled, set_speed, lead_visible, gapsetting, standstil
 
   return packer.make_can_msg("SCC11", 0, values)
 
-def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, scc12, oplong, nosccradar, cnt):
+def create_scc12(packer, apply_accel, enabled, standstill, cruise_on, scc12, oplong, nosccradar, cnt):
   values = scc12
 
   if oplong:
-    if enabled and (not accpause) and cruise_on:
+    if enabled and cruise_on:
       values["ACCMode"] = 1
       if apply_accel < 0:
         values["StopReq"] = standstill

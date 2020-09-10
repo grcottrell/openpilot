@@ -93,12 +93,13 @@ class CarState(CarStateBase):
       ret.cruiseState.available = (cp_scc.vl["SCC11"]["MainMode_ACC"] != 0)
       if ret.cruiseState.available and self.enableCruise and (self.cruise_buttons == 1 or self.cruise_buttons == 2):
         self.allow_enable = True
+      elif not self.enableCruise:
+        self.allow_enable = False
       ret.cruiseState.enabled = (cp_scc.vl["SCC12"]['ACCMode'] != 0) or (self.allow_enable != 0)
       ret.cruiseState.standstill = cp_scc.vl["SCC11"]['SCCInfoDisplay'] == 4.
       self.lead_distance = cp_scc.vl["SCC11"]['ACC_ObjDist']
       self.vrelative = cp_scc.vl["SCC11"]['ACC_ObjRelSpd']
       self.radar_obj_valid = cp_scc.vl["SCC11"]['ACC_ObjStatus']
-
 
     self.is_set_speed_in_mph = int(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"])
     if ret.cruiseState.enabled:

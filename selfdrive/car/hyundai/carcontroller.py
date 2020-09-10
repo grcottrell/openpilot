@@ -167,7 +167,7 @@ class CarController():
 
       can_sends.append(create_clu11(self.packer, frame, 1, CS.clu11, Buttons.NONE, enabled_speed))
 
-    if pcm_cancel_cmd and not self.nosccradar and not self.longcontrol and (CS.scc12["ACCMode"] != 0):
+    if pcm_cancel_cmd and not self.nosccradar and not self.longcontrol and CS.scc12["ACCMode"]:
       self.vdiff = 0.
       can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, self.current_veh_speed))
     elif CS.out.cruiseState.standstill and not self.nosccradar and not self.longcontrol and CS.vrelative > 0:
@@ -176,18 +176,6 @@ class CarController():
         can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.RES_ACCEL, self.current_veh_speed))
     else:
       self.vdiff = 0.
-
-    self.prev_acc_paused_due_brake = self.acc_paused_due_brake
-
-    if self.longcontrol and CS.out.cruiseState.available and (CS.out.brakePressed or
-                                                            (CS.cruise_buttons == 4) or (CS.out.gasPressed and
-                                                                                         not (CS.cruise_buttons == 1 or
-                                                                                              CS.cruise_buttons == 2))):
-      self.acc_paused = True
-      self.acc_paused_due_brake = (CS.cruise_buttons == 4) or CS.out.brakePressed or self.acc_paused_due_brake
-    elif CS.cruise_buttons == 1 or CS.cruise_buttons == 2 or (not self.acc_paused_due_brake) or (not self.longcontrol):
-      self.acc_paused = False
-      self.acc_paused_due_brake = False
 
     self.acc_standstill = False #True if (enabled and not self.acc_paused and CS.out.standstill) else False
 
@@ -201,8 +189,8 @@ class CarController():
                                     CS.out.standstill, CS.scc11, self.longcontrol, self.nosccradar, frame))
 
       can_sends.append(create_scc12(self.packer, apply_accel, enabled,
-                                    self.acc_standstill, self.acc_paused,
-                                    CS.cruise_main_button,
+                                    self.acc_standstill,
+                                    CS.scc11["MainMode_ACC"],
                                     CS.scc12, self.longcontrol, self.nosccradar, self.scc12cnt))
 
     # 20 Hz LFA MFA message
