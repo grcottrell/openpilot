@@ -7,12 +7,11 @@ from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create
 from selfdrive.car.hyundai.values import Buttons, SteerLimitParams, CAR, FEATURES
 from opendbc.can.packer import CANPacker
 from selfdrive.config import Conversions as CV
-from selfdrive.controls.lib.pathplanner import LANE_CHANGE_SPEED_MIN
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 # Accel Hard limits
-ACCEL_HYST_GAP = 0.1 # don't change accel command for small oscilalitons within this value
+ACCEL_HYST_GAP = 0.1  # don't change accel command for small oscillations within this value
 ACCEL_MAX = 3.  # 1.5 m/s2
 ACCEL_MIN = -5.  # 3   m/s2
 ACCEL_SCALE = 1.
@@ -112,7 +111,7 @@ class CarController():
 
     if self.nosccradar:
       self.longcontrol = self.cp_oplongcontrol
-    elif (CS.cancel_button_count == 3) and self.cp_oplongcontrol:# and not CS.brakeUnavailable:
+    elif (CS.cancel_button_count == 3) and self.cp_oplongcontrol:
       self.longcontrol = not self.longcontrol
 
     if self.longcontrol:
