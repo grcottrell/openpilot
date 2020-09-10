@@ -94,10 +94,10 @@ def create_lfa_mfa(packer, frame, enabled):
 
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
-def create_scc11(packer, enabled, set_speed, lead_visible, gapsetting, standstill, scc11, oplong, nosccradar, frame):
+def create_scc11(packer, enabled, set_speed, lead_visible, gapsetting, standstill, scc11, usestockscc, nosccradar, frame):
   values = scc11
 
-  if oplong:
+  if not usestockscc:
     if enabled:
       values["VSetDis"] = set_speed
     if standstill:
@@ -115,10 +115,10 @@ def create_scc11(packer, enabled, set_speed, lead_visible, gapsetting, standstil
 
   return packer.make_can_msg("SCC11", 0, values)
 
-def create_scc12(packer, apply_accel, enabled, standstill, cruise_on, scc12, oplong, nosccradar, cnt):
+def create_scc12(packer, apply_accel, enabled, standstill, cruise_on, scc12, usestockscc, nosccradar, cnt):
   values = scc12
 
-  if oplong:
+  if not usestockscc:
     if enabled and cruise_on:
       values["ACCMode"] = 1
       if apply_accel < 0:

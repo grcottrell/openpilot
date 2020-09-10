@@ -225,12 +225,12 @@ class CarInterface(CarInterfaceBase):
 
     events = self.create_common_events(ret)
 
-    self.CP.enableCruise = (not self.CP.openpilotLongitudinalControl) or (not self.CC.longcontrol)
-    if self.CS.brakeHold and self.CC.longcontrol:
+    self.CP.enableCruise = (not self.CP.openpilotLongitudinalControl) or self.CC.usestockscc
+    if self.CS.brakeHold and not self.CC.usestockscc:
       events.add(EventName.brakeHold)
-    if self.CS.parkBrake and self.CC.longcontrol:
+    if self.CS.parkBrake and not self.CC.usestockscc:
       events.add(EventName.parkBrake)
-    if self.CS.brakeUnavailable and self.CC.longcontrol:
+    if self.CS.brakeUnavailable and not self.CC.usestockscc:
       events.add(EventName.brakeUnavailable)
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
@@ -271,7 +271,7 @@ class CarInterface(CarInterfaceBase):
     # handle button press
     for b in self.buttonEvents:
       if b.type in [ButtonType.accelCruise, ButtonType.decelCruise] and b.pressed \
-              and not ret.brakePressed and (self.CC.nosccradar or not self.CP.enableCruise):
+              and not ret.brakePressed and (self.CP.radarOffCan or not self.CP.enableCruise):
         events.add(EventName.buttonEnable)
       if b.type == ButtonType.cancel and b.pressed:
         events.add(EventName.buttonCancel)

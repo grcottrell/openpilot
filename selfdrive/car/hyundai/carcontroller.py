@@ -58,7 +58,7 @@ class CarController():
     self.packer = CANPacker(dbc_name)
     self.accel_steady = 0
     self.steer_rate_limited = False
-    self.longcontrol = False
+    self.usestockscc = True
     self.lead_visible = False
     self.lead_debounce = 0
     self.apply_accel_last = 0
@@ -67,7 +67,6 @@ class CarController():
     self.current_veh_speed = 0
     self.lfainFingerprint = CP.lfaAvailable
     self.vdiff = 0
-    self.nosccradar = CP.radarOffCan
     self.scc12cnt = 0
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
@@ -106,12 +105,12 @@ class CarController():
     if not lkas_active:
       apply_steer = 0
 
-    if self.nosccradar:
-      self.longcontrol = self.cp_oplongcontrol
+    if CS.nosccradar:
+      self.usestockscc = not self.cp_oplongcontrol
     elif (CS.cancel_button_count == 3) and self.cp_oplongcontrol:
-      self.longcontrol = not self.longcontrol
+      self.usestockscc = not self.usestockscc
 
-    if self.longcontrol:
+    if not self.usestockscc:
       self.gapcount += 1
       if self.gapcount == 50 and self.gapsettingdance == 2:
         self.gapsettingdance = 1
@@ -133,10 +132,7 @@ class CarController():
       process_hud_alert(enabled, self.car_fingerprint, visual_alert,
                         left_lane, right_lane, left_lane_depart, right_lane_depart)
 
-    if CS.is_set_speed_in_mph:
-      speed_conv = CV.MS_TO_MPH
-    else:
-      speed_conv = CV.MS_TO_KPH
+    speed_conv = CV.MS_TO_MPH if CS.is_set_speed_in_mph else speed_conv = CV.MS_TO_KPH
 
     clu11_speed = CS.clu11["CF_Clu_Vanz"]
 
@@ -163,10 +159,10 @@ class CarController():
 
       can_sends.append(create_clu11(self.packer, frame, 1, CS.clu11, Buttons.NONE, enabled_speed))
 
-    if pcm_cancel_cmd and not self.nosccradar and not self.longcontrol and CS.scc12["ACCMode"]:
+    if pcm_cancel_cmd and not CS.nosccradar and self.usestockscc and CS.scc12["ACCMode"]:
       self.vdiff = 0.
       can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, self.current_veh_speed))
-    elif CS.out.cruiseState.standstill and not self.nosccradar and not self.longcontrol and CS.vrelative > 0:
+    elif CS.out.cruiseState.standstill and not CS.nosccradar and self.usestockscc and CS.vrelative > 0:
       self.vdiff += (CS.vrelative - self.vdiff)
       if self.vdiff > 1. or CS.lead_distance > 8.:
         can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.RES_ACCEL, self.current_veh_speed))
@@ -178,16 +174,16 @@ class CarController():
     set_speed *= speed_conv
 
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-    if (CS.scc_bus == 2 or self.longcontrol) and frame % 2 == 0: 
+    if (CS.scc_bus == 2 or not self.usestockscc) and frame % 2 == 0:
       can_sends.append(create_scc11(self.packer, enabled,
                                     set_speed, self.lead_visible,
                                     self.gapsettingdance,
-                                    CS.out.standstill, CS.scc11, self.longcontrol, self.nosccradar, frame))
+                                    CS.out.standstill, CS.scc11, self.usestockscc, CS.nosccradar, frame))
 
       can_sends.append(create_scc12(self.packer, apply_accel, enabled,
                                     self.acc_standstill,
                                     CS.scc11["MainMode_ACC"],
-                                    CS.scc12, self.longcontrol, self.nosccradar, self.scc12cnt))
+                                    CS.scc12, self.usestockscc, CS.nosccradar, self.scc12cnt))
 
     # 20 Hz LFA MFA message
     if frame % 5 == 0 and self.lfa_available:
