@@ -186,7 +186,7 @@ class CarInterface(CarInterfaceBase):
     params = Params()
     ret.openpilotLongitudinalControl = params.get("OpenPilotLongControl", encoding='utf8') == "1" and not (ret.sccBus == 0)
     print("op long toggle",  ret.openpilotLongitudinalControl)
-    ret.openpilotLongitudinalControl = 1
+    ret.openpilotLongitudinalControl = True
 
     if candidate in [ CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_LTD, CAR.IONIQ_HEV, CAR.KONA_EV, CAR.KIA_SORENTO, CAR.SONATA_2019,
                       CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.GENESIS_G70, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.GENESIS_G80,
