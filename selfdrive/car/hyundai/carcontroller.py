@@ -167,7 +167,7 @@ class CarController():
 
       can_sends.append(create_clu11(self.packer, frame, 1, CS.clu11, Buttons.NONE, enabled_speed))
 
-    if pcm_cancel_cmd and not self.nosccradar and not self.longcontrol:
+    if pcm_cancel_cmd and not self.nosccradar and not self.longcontrol and (CS.scc12["ACCMode"] != 0):
       self.vdiff = 0.
       can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, self.current_veh_speed))
     elif CS.out.cruiseState.standstill and not self.nosccradar and not self.longcontrol and CS.vrelative > 0:
