@@ -103,12 +103,6 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QWidget(parent) {
                                             "Use features from the open source community that are not maintained or supported by comma.ai and have not been confirmed to meet the standard safety model. These features include community supported cars and community supported hardware. Be extra cautious when using these features",
                                             "../assets/offroad/icon_shell.png"
                                             ));
-  settings_list->addWidget(new ParamsToggle("OpenPilotLongControl",
-                                            "Enable Openpilot Long Control",
-                                            "Allow openpilot to control gas and brake on select HKG cars. The car should have a radar harness connected to bus2 or shouldbe non SCC car"
-                                            "../assets/offroad/icon_speed_limit.png"
-                                            ));
-
 
   settings_list->setSpacing(25);
 

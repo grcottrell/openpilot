@@ -10,7 +10,7 @@ PrevGaspressed = False
 
 # kph
 FIRST_PRESS_TIME = 1
-LONG_PRESS_TIME = 50
+LONG_PRESS_TIME = 75
 
 V_CRUISE_MAX = 177
 V_CRUISE_MIN = 0.6 * CV.MPH_TO_KPH
@@ -27,7 +27,7 @@ class MPC_COST_LAT:
 
 
 class MPC_COST_LONG:
-  TTC = 5.0
+  TTC = 8.75
   DISTANCE = 0.1
   ACCELERATION = 10.0
   JERK = 20.0
