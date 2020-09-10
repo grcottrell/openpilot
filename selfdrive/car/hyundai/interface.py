@@ -186,7 +186,6 @@ class CarInterface(CarInterfaceBase):
     params = Params()
     ret.openpilotLongitudinalControl = params.get("OpenPilotLongControl", encoding='utf8') == "1" and not (ret.sccBus == 0)
     print("op long toggle",  ret.openpilotLongitudinalControl)
-    ret.openpilotLongitudinalControl = True
 
     if candidate in [ CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_LTD, CAR.IONIQ_HEV, CAR.KONA_EV, CAR.KIA_SORENTO, CAR.SONATA_2019,
                       CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.GENESIS_G70, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.GENESIS_G80,
@@ -272,7 +271,7 @@ class CarInterface(CarInterfaceBase):
     # handle button press
     for b in self.buttonEvents:
       if b.type in [ButtonType.accelCruise, ButtonType.decelCruise] and b.pressed \
-              and not ret.brakePressed and (self.CC.nosccradar or self.CP.enableCruise):
+              and not ret.brakePressed and (self.CC.nosccradar or not self.CP.enableCruise):
         events.add(EventName.buttonEnable)
       if b.type == ButtonType.cancel and b.pressed:
         events.add(EventName.buttonCancel)
