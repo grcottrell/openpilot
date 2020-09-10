@@ -176,7 +176,7 @@ class CarController():
 
     self.prev_acc_paused_due_brake = self.acc_paused_due_brake
 
-    if self.longcontrol and CS.rawcruiseStateavailable and (CS.out.brakePressed or CS.out.brakeHold or
+    if self.longcontrol and CS.out.cruiseState.available and (CS.out.brakePressed or
                                                             (CS.cruise_buttons == 4) or (CS.out.gasPressed and
                                                                                          not (CS.cruise_buttons == 1 or
                                                                                               CS.cruise_buttons == 2))):
