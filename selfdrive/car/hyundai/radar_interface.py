@@ -10,14 +10,14 @@ def get_radar_can_parser(CP):
     # sig_name, sig_address, default
     ("ACC_ObjStatus", "SCC11", 0),
     ("ACC_ObjLatPos", "SCC11", 0),
-    ("ACC_ObjDist", "SCC11", 0),
+    ("ObjValid", "SCC11", 0),
     ("ACC_ObjRelSpd", "SCC11", 0),
   ]
   checks = [
     # address, frequency
     ("SCC11", 50),
   ]
-  return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
+  return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, CP.sccBus)
 
 
 class RadarInterface(RadarInterfaceBase):
@@ -52,7 +52,7 @@ class RadarInterface(RadarInterfaceBase):
       errors.append("canError")
     ret.errors = errors
 
-    valid = cpt["SCC11"]['ACC_ObjStatus']
+    valid = cpt["SCC11"]['ObjValid']
     if valid:
       for ii in range(2):
         if ii not in self.pts:

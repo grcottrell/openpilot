@@ -171,7 +171,7 @@ class RadarD():
       if not dat.radarState.leadOne.status:
         dat.radarState.leadOne.dRel = 150
         dat.radarState.leadOne.vRel = 50
-        dat.radarState.leadTwo.aRel = 0
+        dat.radarState.leadOne.aRel = 0
 
       dat.radarState.leadTwo = get_lead(self.v_ego, self.ready, clusters, sm['model'].leadFuture, low_speed_override=False)
       if not dat.radarState.leadTwo.status:
