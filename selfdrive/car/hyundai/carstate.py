@@ -266,7 +266,7 @@ class CarState(CarStateBase):
       ("CGW4", 5),
       ("WHL_SPD11", 50),
     ]
-    if not CP.radarOffCan and CP.sccBus == 0:
+    if CP.sccBus == 0:
       signals += [
         ("MainMode_ACC", "SCC11", 0),
         ("VSetDis", "SCC11", 0),
@@ -366,13 +366,13 @@ class CarState(CarStateBase):
         ("LVR12", 100)
       ]
 
-    if CP.fcaAvailable:
+    if CP.fcaAvailable and CP.sccBus == 0:
       signals += [
         ("FCA_CmdAct", "FCA11", 0),
         ("CF_VSM_Warn", "FCA11", 0),
       ]
       checks += [("FCA11", 50)]
-    elif not CP.radarOffCan and CP.sccBus == 0:
+    elif CP.sccBus == 0:
       signals += [
         ("AEB_CmdAct", "SCC12", 0),
         ("CF_VSM_Warn", "SCC12", 0),
@@ -484,16 +484,11 @@ class CarState(CarStateBase):
           ("SCC11", 50),
           ("SCC12", 50),
         ]
-      if not CP.radarOffCan:
         if CP.fcaAvailable:
           signals += [
           ("FCA_CmdAct", "FCA11", 0),
           ("CF_VSM_Warn", "FCA11", 0),
           ]
           checks += [("FCA11", 50)]
-        else:
-          signals += [
-          ("AEB_CmdAct", "SCC12", 0),
-          ("CF_VSM_Warn", "SCC12", 0),
-          ]
+
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
