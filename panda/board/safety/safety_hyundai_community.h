@@ -9,9 +9,9 @@ const int HYUNDAI_COMMUNITY_STANDSTILL_THRSLD = 30;  // ~1kph
 const CanMsg HYUNDAI_COMMUNITY_TX_MSGS[] = {
   {832, 0, 8}, {832, 1, 8}, // LKAS11 Bus 0, 1
   {1265, 0, 4}, {1265, 1, 4}, {1265, 2, 4},// CLU11 Bus 0, 1, 2
-  {1157, 0, 4}, {1157, 1, 4}, // LFAHDA_MFC Bus 0, 1
-  {1056, 0, 8}, {1056, 1, 8}, //   SCC11,  Bus 0, 1
-  {1057, 0, 8}, {1057, 1, 8}, //   SCC12,  Bus 0, 1
+  {1157, 0, 4}, // LFAHDA_MFC Bus 0, 1
+  {1056, 0, 8}, //   SCC11,  Bus 0, 1
+  {1057, 0, 8}, //   SCC12,  Bus 0, 1
   {1290, 0, 8}, //   SCC13,  Bus 0
   {905, 0, 8},  //   SCC14,  Bus 0
   // {1186, 0, 8}  //   4a2SCC, Bus 0
@@ -96,6 +96,7 @@ static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   int bus = GET_BUS(to_push);
 
   if ((bus == 1) && hyundai_community_mdps_harness_present) {
+
     if (addr == 593) {
       int torque_driver_new = ((GET_BYTES_04(to_push) & 0x7ff) * 0.79) - 808; // scale down new driver torque signal to match previous one
       // update array of samples
