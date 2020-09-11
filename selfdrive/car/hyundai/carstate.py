@@ -82,7 +82,6 @@ class CarState(CarStateBase):
     else:
       self.cancel_button_count = 0
 
-
     # cruise state
     if self.nosccradar:
       if self.cruise_buttons == 1 or self.cruise_buttons == 2:
@@ -484,11 +483,11 @@ class CarState(CarStateBase):
           ("SCC11", 50),
           ("SCC12", 50),
         ]
-        if CP.fcaAvailable:
-          signals += [
-          ("FCA_CmdAct", "FCA11", 0),
-          ("CF_VSM_Warn", "FCA11", 0),
-          ]
-          checks += [("FCA11", 50)]
+      if CP.fcaAvailable:
+        signals += [
+        ("FCA_CmdAct", "FCA11", 0),
+        ("CF_VSM_Warn", "FCA11", 0),
+        ]
+        checks += [("FCA11", 50)]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
