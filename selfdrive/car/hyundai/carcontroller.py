@@ -144,7 +144,6 @@ class CarController():
     else:
       self.current_veh_speed = int(CS.out.vEgo * speed_conv)
 
-    self.scc12cnt = frame % 0xF
     self.clu11_cnt = frame % 0x10
     can_sends = []
 
@@ -183,6 +182,8 @@ class CarController():
 
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     if (CS.scc_bus == 2 or not self.usestockscc) and frame % 2 == 0:
+      self.scc12cnt += 1
+      self.scc12cnt %= 0xF
       can_sends.append(create_scc11(self.packer, enabled,
                                     set_speed, self.lead_visible,
                                     self.gapsettingdance,
