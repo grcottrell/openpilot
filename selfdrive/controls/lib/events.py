@@ -495,15 +495,12 @@ EVENTS = {
   },
 
   EventName.brakeHold: {
-    ET.WARNING: Alert(
-      "Auto Hold Active",
-      "Press Gas to continue",
-      AlertStatus.normal, AlertSize.mid,
-      Priority.LOWEST, VisualAlert.none, AudibleAlert.none, 0., 0., .2)
+    ET.USER_DISABLE: EngagementAlert(AudibleAlert.chimeDisengage),
+    ET.NO_ENTRY: NoEntryAlert("Brake Hold Active"),
   },
 
   EventName.parkBrake: {
-    ET.WARNING: EngagementAlert(AudibleAlert.chimeDisengage),
+    ET.USER_DISABLE: EngagementAlert(AudibleAlert.chimeDisengage),
     ET.NO_ENTRY: NoEntryAlert("Park Brake Engaged"),
   },
 
