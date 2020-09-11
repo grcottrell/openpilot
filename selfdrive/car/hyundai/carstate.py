@@ -280,6 +280,17 @@ class CarState(CarStateBase):
         ("SCC11", 50),
         ("SCC12", 50),
       ]
+      if CP.fcaAvailable:
+        signals += [
+          ("FCA_CmdAct", "FCA11", 0),
+          ("CF_VSM_Warn", "FCA11", 0),
+        ]
+        checks += [("FCA11", 50)]
+      else:
+        signals += [
+          ("AEB_CmdAct", "SCC12", 0),
+          ("CF_VSM_Warn", "SCC12", 0),
+        ]
 
     if not CP.mdpsHarness:
       signals += [
@@ -366,17 +377,7 @@ class CarState(CarStateBase):
         ("LVR12", 100)
       ]
 
-    if CP.fcaAvailable and CP.sccBus == 0:
-      signals += [
-        ("FCA_CmdAct", "FCA11", 0),
-        ("CF_VSM_Warn", "FCA11", 0),
-      ]
-      checks += [("FCA11", 50)]
-    elif CP.sccBus == 0:
-      signals += [
-        ("AEB_CmdAct", "SCC12", 0),
-        ("CF_VSM_Warn", "SCC12", 0),
-      ]
+
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
 
