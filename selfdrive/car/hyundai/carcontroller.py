@@ -67,7 +67,6 @@ class CarController():
     self.current_veh_speed = 0
     self.lfainFingerprint = CP.lfaAvailable
     self.vdiff = 0
-    self.scc12cnt = 0
     self.resumebuttoncnt = 0
     self.lastresumeframe = 0
 
@@ -145,7 +144,7 @@ class CarController():
     else:
       self.current_veh_speed = int(CS.out.vEgo * speed_conv)
 
-    self.scc12cnt %= 0xF
+    self.scc12cnt = frame % 0xF
     self.clu11_cnt = frame % 0x10
     can_sends = []
 
