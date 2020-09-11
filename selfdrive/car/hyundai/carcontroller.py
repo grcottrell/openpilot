@@ -69,6 +69,7 @@ class CarController():
     self.vdiff = 0
     self.resumebuttoncnt = 0
     self.lastresumeframe = 0
+    self.scc12cnt = 0
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible):
