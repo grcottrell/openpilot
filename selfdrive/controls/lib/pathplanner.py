@@ -118,16 +118,16 @@ class PathPlanner():
       blindspot_detected = ((sm['carState'].leftBlindspot and self.lane_change_direction == LaneChangeDirection.left) or
                             (sm['carState'].rightBlindspot and self.lane_change_direction == LaneChangeDirection.right))
 
-      if not blindspot_detected:
+      if (not blindspot_detected) and not self.lane_change_blocked_by_driver:
         self.pre_auto_LCA_timer += DT_MDL
       else:
-        self.pre_auto_LCA_timer = -2. # add 
+        self.pre_auto_LCA_timer = -2. # add time when bsm detected
 
       if not self.lane_change_blocked_by_driver:
          self.lane_change_blocked_by_driver = (sm['carState'].steeringPressed and
-                                               ((sm['carState'].steeringTorque > 50 and
+                                               ((sm['carState'].steeringTorque > 0 and
                                                  self.lane_change_direction == LaneChangeDirection.right) or
-                                                (sm['carState'].steeringTorque < -50 and
+                                                (sm['carState'].steeringTorque < 0 and
                                                  self.lane_change_direction == LaneChangeDirection.left)))
 
       torque_applied = (1.6 > self.pre_auto_LCA_timer > 1.1 and not blindspot_detected) or \
