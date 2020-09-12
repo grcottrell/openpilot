@@ -78,6 +78,7 @@ class PathPlanner():
     self.angle_steers_des_mpc = 0.0
     self.angle_steers_des_prev = 0.0
     self.angle_steers_des_time = 0.0
+    self.lane_change_blocked_by_driver = False
 
   def update(self, sm, pm, CP, VM):
     v_ego = sm['carState'].vEgo
@@ -107,12 +108,11 @@ class PathPlanner():
     elif sm['carState'].rightBlinker:
       self.lane_change_direction = LaneChangeDirection.right
 
-    if (not active) or (self.lane_change_timer > LANE_CHANGE_TIME_MAX) or (not one_blinker) or (not self.lane_change_enabled) or \
-       (sm['carState'].steeringPressed and ((sm['carState'].steeringTorque > 50 and self.lane_change_direction == LaneChangeDirection.right) or
-                                            (sm['carState'].steeringTorque < -50 and self.lane_change_direction == LaneChangeDirection.left))):
+    if (not active) or (self.lane_change_timer > LANE_CHANGE_TIME_MAX) or (not one_blinker) or (not self.lane_change_enabled):
       self.lane_change_state = LaneChangeState.off
       self.lane_change_direction = LaneChangeDirection.none
       self.pre_auto_LCA_timer = 0.
+      self.lane_change_blocked_by_driver = False
     else:
 
       blindspot_detected = ((sm['carState'].leftBlindspot and self.lane_change_direction == LaneChangeDirection.left) or
@@ -123,6 +123,13 @@ class PathPlanner():
       else:
         self.pre_auto_LCA_timer = 0.
 
+      if not self.lane_change_blocked_by_driver:
+         self.lane_change_blocked_by_driver = (sm['carState'].steeringPressed and
+                                               ((sm['carState'].steeringTorque > 50 and
+                                                 self.lane_change_direction == LaneChangeDirection.right) or
+                                                (sm['carState'].steeringTorque < -50 and
+                                                 self.lane_change_direction == LaneChangeDirection.left)))
+
       torque_applied = (1.6 > self.pre_auto_LCA_timer > 1.1 and not blindspot_detected) or \
                        (sm['carState'].steeringPressed and
                         ((sm['carState'].steeringTorque > 0 and self.lane_change_direction == LaneChangeDirection.left) or
@@ -132,7 +139,8 @@ class PathPlanner():
 
       # State transitions
       # off
-      if self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker and not below_lane_change_speed:
+      if self.lane_change_state == LaneChangeState.off and one_blinker and not self.prev_one_blinker \
+              and not below_lane_change_speed and not self.lane_change_blocked_by_driver:
         self.lane_change_state = LaneChangeState.preLaneChange
         self.lane_change_ll_prob = 1.0
 
