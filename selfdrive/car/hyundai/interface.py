@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 from cereal import car
-from common import params
-from common.params import Params
 from selfdrive.config import Conversions as CV
 from selfdrive.car.hyundai.values import Ecu, ECU_FINGERPRINT, CAR, FINGERPRINTS, Buttons, HYBRID_VEH
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, is_ecu_disconnected, gen_empty_fingerprint
@@ -183,9 +181,7 @@ class CarInterface(CarInterfaceBase):
     ret.sccBus = 0 if 1057 in fingerprint[0] else 2 if 1057 in fingerprint[2] else -1
     ret.radarOffCan = (ret.sccBus == -1)
     ret.radarTimeStep = 0.02
-    params = Params()
     ret.openpilotLongitudinalControl = not (ret.sccBus == 0)
-    print("op long toggle",  ret.openpilotLongitudinalControl)
 
     if candidate in [ CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_LTD, CAR.IONIQ_HEV, CAR.KONA_EV, CAR.KIA_SORENTO, CAR.SONATA_2019,
                       CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.GENESIS_G70, CAR.SONATA_HEV, CAR.SANTA_FE, CAR.GENESIS_G80,
