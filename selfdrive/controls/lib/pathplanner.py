@@ -121,7 +121,7 @@ class PathPlanner():
       if not blindspot_detected:
         self.pre_auto_LCA_timer += DT_MDL
       else:
-        self.pre_auto_LCA_timer = 0.
+        self.pre_auto_LCA_timer = -2. # add 
 
       if not self.lane_change_blocked_by_driver:
          self.lane_change_blocked_by_driver = (sm['carState'].steeringPressed and
@@ -146,7 +146,7 @@ class PathPlanner():
 
       # pre
       elif self.lane_change_state == LaneChangeState.preLaneChange:
-        if not one_blinker or below_lane_change_speed:
+        if not one_blinker or below_lane_change_speed or self.lane_change_blocked_by_driver:
           self.lane_change_state = LaneChangeState.off
         elif torque_applied and not blindspot_detected:
           self.lane_change_state = LaneChangeState.laneChangeStarting
