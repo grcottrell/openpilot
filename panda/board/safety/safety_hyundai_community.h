@@ -6,6 +6,13 @@ const int HYUNDAI_COMMUNITY_MAX_RATE_DOWN = 7;
 const int HYUNDAI_COMMUNITY_DRIVER_TORQUE_ALLOWANCE = 50;
 const int HYUNDAI_COMMUNITY_DRIVER_TORQUE_FACTOR = 2;
 const int HYUNDAI_COMMUNITY_STANDSTILL_THRSLD = 30;  // ~1kph
+
+const int HYUNDAI_COMMUNITY_MAX_ACCEL = 150;        // 1.5 m/s2
+const int HYUNDAI_COMMUNITY_MIN_ACCEL = -300;       // -3.0 m/s2
+
+const int HYUNDAI_COMMUNITY_ISO_MAX_ACCEL = 200;        // 2.0 m/s2
+const int HYUNDAI_COMMUNITY_ISO_MIN_ACCEL = -350;       // -3.5 m/s2
+
 const CanMsg HYUNDAI_COMMUNITY_TX_MSGS[] = {
   {832, 0, 8}, {832, 1, 8}, // LKAS11 Bus 0, 1
   {1265, 0, 4}, {1265, 1, 4}, {1265, 2, 4},// CLU11 Bus 0, 1, 2
@@ -171,7 +178,24 @@ static int hyundai_community_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   if (relay_malfunction) {
     tx = 0;
   }
+#if 1  // how to handle stock scc and op long which can be switched on the fly?
+  // ACCEL: safety check
+  if ((addr == 1057) && (bus == 0) && hyundai_community_non_scc_car){
+    int desired_accel = ((GET_BYTES_04(to_send) >> 24) & 0x7ff) - 1024;
+    if (!controls_allowed) {
+      if ((-10 > desired_accel) && (desired_accel > 10)) {
+        tx = 0;
+      }
+    }
+    bool violation = (unsafe_mode & UNSAFE_RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX)?
+      max_limit_check(desired_accel, HYUNDAI_COMMUNITY_ISO_MAX_ACCEL, HYUNDAI_COMMUNITY_ISO_MIN_ACCEL) :
+      max_limit_check(desired_accel, HYUNDAI_COMMUNITY_MAX_ACCEL, HYUNDAI_COMMUNITY_MIN_ACCEL);
 
+    if (violation) {
+      tx = 0;
+    }
+  }
+#endif
   // LKA STEER: safety check
   if ((addr == 832) && ((bus == 0) || ((bus == 1) && (hyundai_community_mdps_harness_present)))) {
     int desired_torque = ((GET_BYTES_04(to_send) >> 16) & 0x7ff) - 1024;
