@@ -26,6 +26,7 @@ class CarState(CarStateBase):
     self.cancel_button_timer = 0
     self.leftblinkerflashdebounce = 0
     self.rightblinkerflashdebounce = 0
+    self.steeringPressedTimer = 0
 
   def update(self, cp, cp2, cp_cam):
     cp_mdps = cp2 if self.CP.mdpsHarness else cp
@@ -73,7 +74,16 @@ class CarState(CarStateBase):
 
     ret.steeringTorque = cp_mdps.vl["MDPS12"]['CR_Mdps_StrColTq']
     ret.steeringTorqueEps = cp_mdps.vl["MDPS12"]['CR_Mdps_OutTq']
-    ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
+
+    if abs(ret.steeringTorque) > STEER_THRESHOLD:
+      self.steeringPressedTimer +=1
+      if abs(ret.steeringTorque) > 3 * STEER_THRESHOLD:
+        self.steeringPressedTimer = 50
+    else:
+      self.steeringPressedTimer = 0
+
+    ret.steeringPressed = self.steeringPressedTimer >= 50
+
     ret.steerWarning = cp_mdps.vl["MDPS12"]['CF_Mdps_ToiUnavail'] != 0
 
     self.brakeHold = (cp.vl["ESP11"]['AVH_STAT'] == 1)
