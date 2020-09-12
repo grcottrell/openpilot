@@ -167,11 +167,11 @@ class CarController():
     if pcm_cancel_cmd and not self.nosccradar and self.usestockscc and CS.scc12["ACCMode"] and not CS.out.standstill:
       self.vdiff = 0.
       self.resumebuttoncnt = 0
-      can_sends.append(create_clu11(self.packer, CS.scc_bus, CS.clu11, Buttons.CANCEL, self.current_veh_speed, self.clu11_cnt))
+      can_sends.append(create_clu11(self.packer, CS.CP.sccBus, CS.clu11, Buttons.CANCEL, self.current_veh_speed, self.clu11_cnt))
     elif CS.out.cruiseState.standstill and not self.nosccradar and self.usestockscc and CS.vrelative > 0:
       self.vdiff += (CS.vrelative - self.vdiff)
       if (frame - self.lastresumeframe > 10) and (self.vdiff > .5 or CS.lead_distance > 6.):
-        can_sends.append(create_clu11(self.packer, CS.scc_bus, CS.clu11, Buttons.RES_ACCEL, self.current_veh_speed, self.resumebuttoncnt))
+        can_sends.append(create_clu11(self.packer, CS.CP.sccBus, CS.clu11, Buttons.RES_ACCEL, self.current_veh_speed, self.resumebuttoncnt))
         self.resumebuttoncnt += 1
         if self.resumebuttoncnt > 5:
           self.lastresumeframe = frame
@@ -185,7 +185,7 @@ class CarController():
     set_speed *= speed_conv
 
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
-    if (CS.scc_bus == 2 or not self.usestockscc) and frame % 2 == 0:
+    if (CS.CP.sccBus == 2 or not self.usestockscc) and frame % 2 == 0:
       self.scc12cnt += 1
       self.scc12cnt %= 0xF
       can_sends.append(create_scc11(self.packer, enabled,
