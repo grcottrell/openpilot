@@ -65,7 +65,7 @@ class CarState(CarStateBase):
 
     if self.leftblinkerflash:
       self.leftblinkerflashdebounce = 50
-    elif self.leftblinkerflashdebouce > 0:
+    elif self.leftblinkerflashdebounce > 0:
       self.leftblinkerflashdebounce -= 1
 
     if self.rightblinkerflash:
