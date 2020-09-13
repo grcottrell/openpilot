@@ -198,13 +198,13 @@ static int hyundai_community_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 
   // ACCEL: safety check
   if ((addr == 1057) && (bus == 0) && hyundai_community_non_scc_car && (!aeb_cmd_act)) {
-    int desired_accel = ((GET_BYTES_04(to_send) >> 24) & 0x7ff) - 1023;
+    int desired_accel = ((GET_BYTES_04(to_send) >> 37) & 0x7ff) - 1023;
     if (controls_allowed) {
       bool violation = (unsafe_mode & UNSAFE_RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX)?
           max_limit_check(desired_accel, HYUNDAI_COMMUNITY_ISO_MAX_ACCEL, HYUNDAI_COMMUNITY_ISO_MIN_ACCEL) :
           max_limit_check(desired_accel, HYUNDAI_COMMUNITY_MAX_ACCEL, HYUNDAI_COMMUNITY_MIN_ACCEL);
       if (violation) {
-        tx = 1;
+        tx = 0;
       }
     }
   }
