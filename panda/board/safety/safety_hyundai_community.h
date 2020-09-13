@@ -312,18 +312,12 @@ static void hyundai_community_init(int16_t param) {
   UNUSED(param);
   controls_allowed = false;
   relay_malfunction_reset();
-  hyundai_community_mdps_harness_present = true;
-  hyundai_community_radar_harness_present = true;
-  hyundai_community_non_scc_car = true;
 }
 
 static void hyundai_community_nonscc_init(int16_t param) {
   UNUSED(param);
   controls_allowed = false;
   relay_malfunction_reset();
-  hyundai_community_mdps_harness_present = true;
-  hyundai_community_radar_harness_present = true;
-  hyundai_community_non_scc_car = true;
 }
 
 const safety_hooks hyundai_community_hooks = {
