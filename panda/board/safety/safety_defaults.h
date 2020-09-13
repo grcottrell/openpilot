@@ -88,9 +88,6 @@ static void alloutput_init(int16_t param) {
   UNUSED(param);
   controls_allowed = true;
   relay_malfunction_reset();
-  hyundai_community_mdps_harness_present = true;
-  hyundai_community_radar_harness_present = true;
-  hyundai_community_non_scc_car = true;
 }
 
 static int alloutput_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
