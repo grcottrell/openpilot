@@ -308,7 +308,7 @@ class CarState(CarStateBase):
         ("SCC11", 50),
         ("SCC12", 50),
       ]
-    if CP.fcaBus == 0:
+    if 1==1: #CP.fcaBus == 2:
       signals += [
         ("FCA_CmdAct", "FCA11", 0),
         ("CF_VSM_Warn", "FCA11", 0),
