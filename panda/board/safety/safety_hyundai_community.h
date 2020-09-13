@@ -199,7 +199,7 @@ static int hyundai_community_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   // ACCEL: safety check
   if ((addr == 1057) && (bus == 0) && hyundai_community_non_scc_car && (!aeb_cmd_act)) {
     int desired_accel = ((GET_BYTES_04(to_send) >> 24) & 0x7ff) - 1024;
-    if (!controls_allowed) {
+    if (controls_allowed) {
       if ((-10 > desired_accel) && (desired_accel > 10)) {
         tx = 0;
       }
