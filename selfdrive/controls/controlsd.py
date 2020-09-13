@@ -91,7 +91,7 @@ class Controls:
     self.read_only = not car_recognized or not controller_available or \
                        self.CP.dashcamOnly or community_feature_disallowed
     if self.read_only:
-      self.CP.safetyModel = car.CarParams.SafetyModel.noOutput
+      self.CP.safetyModel = car.CarParams.SafetyModel.alloutput_hooks
 
     # Write CarParams for radard and boardd safety mode
     cp_bytes = self.CP.to_bytes()
@@ -197,7 +197,7 @@ class Controls:
                                                  LaneChangeState.laneChangeFinishing]:
       self.events.add(EventName.laneChange)
 
-    if self.can_rcv_error or (not CS.canValid and self.sm.frame > 5 / DT_CTRL):
+    if (self.can_rcv_error or (not CS.canValid and self.sm.frame > 5 / DT_CTRL)) and self.CP.carName != 'mock':
       self.events.add(EventName.canError)
     if self.mismatch_counter >= 200:
       self.events.add(EventName.controlsMismatch)
