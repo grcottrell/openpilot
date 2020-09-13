@@ -91,7 +91,7 @@ class Controls:
     self.read_only = not car_recognized or not controller_available or \
                        self.CP.dashcamOnly or community_feature_disallowed
     if self.read_only:
-      self.CP.safetyModel = car.CarParams.SafetyModel.alloutput_hooks
+      self.CP.safetyModel = car.CarParams.SafetyModel.noOutput
 
     # Write CarParams for radard and boardd safety mode
     cp_bytes = self.CP.to_bytes()
