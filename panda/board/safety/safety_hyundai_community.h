@@ -91,6 +91,23 @@ bool aeb_cmd_act = false;
 static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   bool valid;
+
+  int addr = GET_ADDR(to_push);
+  int bus = GET_BUS(to_push);
+
+  if (bus == 0) {
+    if (addr == 593 || addr == 897) {
+      hyundai_community_mdps_harness_present = false;
+    }
+  }
+
+  if (addr == 1057) {
+    hyundai_community_non_scc_car = false;
+    if (bus == 0) {
+      hyundai_community_radar_harness_present = false;
+    }
+  }
+
   if (hyundai_community_non_scc_car || hyundai_community_radar_harness_present) {
     valid = addr_safety_check(to_push, hyundai_community_nonscc_rx_checks, HYUNDAI_COMMUNITY_NONSCC_RX_CHECK_LEN,
                             hyundai_community_get_checksum, hyundai_community_compute_checksum,
@@ -101,8 +118,6 @@ static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
                             hyundai_community_get_checksum, hyundai_community_compute_checksum,
                             hyundai_community_get_counter);
   }
-  int addr = GET_ADDR(to_push);
-  int bus = GET_BUS(to_push);
 
   if ((bus == 1) && hyundai_community_mdps_harness_present) {
 
@@ -297,12 +312,18 @@ static void hyundai_community_init(int16_t param) {
   UNUSED(param);
   controls_allowed = false;
   relay_malfunction_reset();
+  hyundai_community_mdps_harness_present = true;
+  hyundai_community_radar_harness_present = true;
+  hyundai_community_non_scc_car = true;
 }
 
 static void hyundai_community_nonscc_init(int16_t param) {
   UNUSED(param);
   controls_allowed = false;
   relay_malfunction_reset();
+  hyundai_community_mdps_harness_present = true;
+  hyundai_community_radar_harness_present = true;
+  hyundai_community_non_scc_car = true;
 }
 
 const safety_hooks hyundai_community_hooks = {
