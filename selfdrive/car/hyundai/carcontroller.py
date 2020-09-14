@@ -79,7 +79,6 @@ class CarController():
     self.usestockscc = True
     self.lead_visible = False
     self.lead_debounce = 0
-    self.apply_accel_last = 0
     self.gapsettingdance = 2
     self.gapcount = 0
     self.current_veh_speed = 0
@@ -111,8 +110,9 @@ class CarController():
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady)
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
     self.accel_lim = apply_accel
-
-    apply_accel = accel_rate_limit(self.accel_lim, self.accel_lim_prev)
+    
+    if enabled:
+      apply_accel = accel_rate_limit(self.accel_lim, self.accel_lim_prev)
     # Steering Torque
     new_steer = actuators.steer * SteerLimitParams.STEER_MAX
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, SteerLimitParams)
@@ -148,7 +148,6 @@ class CarController():
         self.gapsettingdance = 2
         self.gapcount = 0
 
-    self.apply_accel_last = apply_accel
     self.apply_steer_last = apply_steer
 
     sys_warning, sys_state, left_lane_warning, right_lane_warning =\
