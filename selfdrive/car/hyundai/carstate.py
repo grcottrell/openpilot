@@ -73,7 +73,7 @@ class CarState(CarStateBase):
     ret.leftBlinker = cp.vl["CGW1"]['CF_Gway_TSigLHSw'] != 0 or self.leftblinkerflashdebounce > 0
     ret.rightBlinker = cp.vl["CGW1"]['CF_Gway_TSigRHSw'] != 0 or self.rightblinkerflashdebounce > 0
 
-    ret.steeringTorque = cp_mdps.vl["MDPS11"]['CR_Mdps_DrvTq']
+    ret.steeringTorque = cp_mdps.vl["MDPS12"]['CR_Mdps_StrColTq']
     ret.steeringTorqueEps = cp_mdps.vl["MDPS12"]['CR_Mdps_OutTq']
 
     if abs(ret.steeringTorque) > 20:
@@ -327,13 +327,10 @@ class CarState(CarStateBase):
         ("CF_Mdps_SErr", "MDPS12", 0),
         ("CR_Mdps_StrTq", "MDPS12", 0),
         ("CF_Mdps_FailStat", "MDPS12", 0),
-        ("CR_Mdps_OutTq", "MDPS12", 0),
-
-        ("CR_Mdps_DrvTq", "MDPS11", 0),
+        ("CR_Mdps_OutTq", "MDPS12", 0)
       ]
       checks += [
-        ("MDPS12", 50),
-        ("MDPS11", 50),
+        ("MDPS12", 50)
       ]
     if CP.sasBus == 0:
       signals += [
@@ -420,13 +417,10 @@ class CarState(CarStateBase):
         ("CF_Mdps_SErr", "MDPS12", 0),
         ("CR_Mdps_StrTq", "MDPS12", 0),
         ("CF_Mdps_FailStat", "MDPS12", 0),
-        ("CR_Mdps_OutTq", "MDPS12", 0),
-
-        ("CR_Mdps_DrvTq", "MDPS11", 0),
+        ("CR_Mdps_OutTq", "MDPS12", 0)
       ]
       checks += [
-        ("MDPS12", 50),
-        ("MDPS11", 50),
+        ("MDPS12", 50)
       ]
     if CP.sasBus == 1:
       signals += [
