@@ -4,7 +4,7 @@ from cereal import car
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.hyundai.carstate import GearShifter
 from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfa_mfa, \
-                                             create_scc11, create_scc12, create_scc13, create_scc14
+                                             create_scc11, create_scc12, create_scc13, create_scc14, create_scc42a
 from selfdrive.car.hyundai.values import Buttons, SteerLimitParams, CAR, FEATURES
 from opendbc.can.packer import CANPacker
 from selfdrive.config import Conversions as CV
@@ -122,7 +122,7 @@ class CarController():
     lkas_active = enabled and ((abs(CS.out.steeringAngle) < 90.) or self.high_steer_allowed)
 
     # fix for Genesis hard fault at low speed
-    if CS.out.vEgo < 55 * CV.KPH_TO_MS and self.car_fingerprint == CAR.HYUNDAI_GENESIS and not CS.CP.mdpsHarness:
+    if CS.out.vEgo < 55 * CV.KPH_TO_MS and self.car_fingerprint == CAR.HYUNDAI_GENESIS and CS.CP.minSteerSpeed > 0.:
       lkas_active = False
 
     if not lkas_active:
@@ -217,6 +217,7 @@ class CarController():
 
       can_sends.append(create_scc13(self.packer, CS.scc13))
       can_sends.append(create_scc14(self.packer, enabled, self.usestockscc, CS.out.stockAeb, CS.scc14))
+      can_sends.append(create_scc42a(self.packer))
 
     # 20 Hz LFA MFA message
     if frame % 5 == 0 and self.lfa_available:
