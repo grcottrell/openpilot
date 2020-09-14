@@ -13,8 +13,8 @@ VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 # Accel Hard limits
 ACCEL_HYST_GAP = 0.1  # don't change accel command for small oscillations within this value
-ACCEL_MAX = 3.  # 1.5 m/s2
-ACCEL_MIN = -5.  # 3   m/s2
+ACCEL_MAX = 2.  # 1.5 m/s2
+ACCEL_MIN = -3.5  # 3   m/s2
 ACCEL_SCALE = 1.
 
 def accel_hysteresis(accel, accel_steady):
@@ -27,6 +27,21 @@ def accel_hysteresis(accel, accel_steady):
   accel = accel_steady
 
   return accel, accel_steady
+
+def accel_rate_limit(accel_lim, prev_accel_lim):
+
+  if accel_lim > 0:
+    if accel_lim > prev_accel_lim:
+      accel_lim = min(accel_lim, prev_accel_lim + 0.02)
+    else:
+      accel_lim = max(accel_lim, prev_accel_lim - 0.035)
+  else:
+    if accel_lim < prev_accel_lim:
+      accel_lim = max(accel_lim, prev_accel_lim - 0.035)
+    else:
+      accel_lim = min(accel_lim, prev_accel_lim + 0.035)
+
+  return accel_lim
 
 def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
                       right_lane, left_lane_depart, right_lane_depart):
@@ -58,6 +73,8 @@ class CarController():
     self.cp_oplongcontrol = CP.openpilotLongitudinalControl
     self.packer = CANPacker(dbc_name)
     self.accel_steady = 0
+    self.accel_lim_prev = 0.
+    self.accel_lim = 0.
     self.steer_rate_limited = False
     self.usestockscc = True
     self.lead_visible = False
@@ -88,11 +105,14 @@ class CarController():
       self.lead_visible = lead_visible
 
     # gas and brake
+    self.accel_lim_prev = self.accel_lim
     apply_accel = actuators.gas - actuators.brake
 
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady)
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
+    self.accel_lim = apply_accel
 
+    apply_accel = accel_rate_limit(self.accel_lim, self.accel_lim_prev)
     # Steering Torque
     new_steer = actuators.steer * SteerLimitParams.STEER_MAX
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, SteerLimitParams)
