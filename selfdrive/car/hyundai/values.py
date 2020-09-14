@@ -286,4 +286,4 @@ DBC = {
   CAR.KIA_CADENZA_HEV: dbc_dict('hyundai_kia_generic_hybrid', None),
 }
 
-STEER_THRESHOLD = 10
+STEER_THRESHOLD = 75
