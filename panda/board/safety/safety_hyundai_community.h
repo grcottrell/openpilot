@@ -7,7 +7,7 @@ const int HYUNDAI_COMMUNITY_DRIVER_TORQUE_ALLOWANCE = 50;
 const int HYUNDAI_COMMUNITY_DRIVER_TORQUE_FACTOR = 2;
 const int HYUNDAI_COMMUNITY_STANDSTILL_THRSLD = 30;  // ~1kph
 
-const int HYUNDAI_COMMUNITY_MAX_ACCEL = 150;        // 1.5 m/s2
+const int HYUNDAI_COMMUNITY_MAX_ACCEL = 200;        // 1.5 m/s2
 const int HYUNDAI_COMMUNITY_MIN_ACCEL = -300;       // -3.0 m/s2
 
 const int HYUNDAI_COMMUNITY_ISO_MAX_ACCEL = 200;        // 2.0 m/s2
@@ -199,7 +199,7 @@ static int hyundai_community_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   // ACCEL: safety check
   if ((addr == 1057) && (bus == 0) && hyundai_community_non_scc_car && (!aeb_cmd_act) && vehicle_moving) {
     int desired_accel = (GET_BYTE(to_send, 3) | ((GET_BYTE(to_send, 4) & 0x7) << 8)) - 1024;
-    if (((desired_accel > 10) || (desired_accel < -10))&& (!controls_allowed)) {
+    if (((desired_accel > 10) || (desired_accel < -10)) && (!controls_allowed)) {
         tx = 0;
     }
     if (controls_allowed) {
