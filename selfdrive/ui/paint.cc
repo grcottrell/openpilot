@@ -505,7 +505,6 @@ static void ui_draw_vision_event(UIState *s) {
     nvgFill(s->vg);
     nvgRestore(s->vg);
     }
-  }
 }
 
 static void ui_draw_vision_face(UIState *s) {
