@@ -541,7 +541,7 @@ static void ui_draw_vision_brake(UIState *s) {
   const UIScene *scene = &s->scene;
   const int brake_size = 96;
   const int brake_x = (scene->viz_rect.x + (brake_size * 3) + (bdr_s * 4));
-  const int brake_y = ((s->scene.viz_rect.bottom() + ((footer_h - brake_size) / 2));
+  const int brake_y = (scene.viz_rect.bottom() + ((footer_h - brake_size) / 2));
   const int brake_img_size = (brake_size * 1.5);
   const int brake_img_x = (brake_x - (brake_img_size / 2));
   const int brake_img_y = (brake_y - (brake_size / 4));
@@ -772,7 +772,7 @@ static void bb_ui_draw_UI(UIState *s)
 
   const int bb_dmr_w = 180;
   const int bb_dmr_x = scene->viz_rect.x + scene->viz_rect.w - bb_dmr_w - (bdr_s * 2);
-  const int bb_dmr_y = (viz_rect.y + (bdr_s * 1.5)) + 220;
+  const int bb_dmr_y = (scene->viz_rect.y + (bdr_s * 1.5)) + 220;
 
   bb_ui_draw_measures_right(s, bb_dmr_x, bb_dmr_y-20, bb_dmr_w);
 }
