@@ -199,6 +199,9 @@ class CarInterface(CarInterfaceBase):
     if ret.mdpsHarness:
       ret.minSteerSpeed = 0.
 
+    print("MDPS_HARNESS_DETECTED??", ret.mdpsHarness)
+    print("SCC BUS on Which BUS??", ret.sccBus)
+
     ret.centerToFront = ret.wheelbase * 0.4
 
     # TODO: get actual value, for now starting with reasonable value for
