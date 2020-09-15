@@ -204,8 +204,8 @@ static int hyundai_community_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
     int desired_accel = (GET_BYTE(to_send, 3) | ((GET_BYTE(to_send, 4) & 0x7) << 8)) - 1024;
     prev_desired_accel = desired_accel;
     if (!controls_allowed) {
-        if ((desired_accel < -10) && (prev_desired_accel >= desired_accel) ||  //staying in braking or braking more
-            (desired_accel > 10) && (prev_desired_accel <= desired_accel))     //staying in gas or accelerating more
+        if (((desired_accel < -10) && (prev_desired_accel >= desired_accel))||  //staying in braking or braking more
+            ((desired_accel > 10) && (prev_desired_accel <= desired_accel)))     //staying in gas or accelerating more
         {
            decel_not_ramping +=1;
         }
