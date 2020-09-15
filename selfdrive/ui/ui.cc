@@ -148,8 +148,8 @@ void update_sockets(UIState *s) {
       s->status = STATUS_WARNING;
     } else if (alertStatus == cereal::ControlsState::AlertStatus::CRITICAL) {
       s->status = STATUS_ALERT;
-    } else if (s->status = scene.controls_state.getEnabled() != false){
-       (s->longitudinal_control)? STATUS_ENGAGED_OPLONG:STATUS_ENGAGED;
+    } else if (scene.controls_state.getEnabled()){
+      s->status = (s->longitudinal_control)? STATUS_ENGAGED_OPLONG:STATUS_ENGAGED;
     }
     else {
       s->status = STATUS_DISENGAGED;
