@@ -27,7 +27,7 @@ const uint8_t alert_colors[][4] = {
   [STATUS_OFFROAD] = {0x07, 0x23, 0x39, 0xf1},
   [STATUS_DISENGAGED] = {0x17, 0x33, 0x49, 0xc8},
   [STATUS_ENGAGED] = {0x17, 0x86, 0x44, 0x01},
-  [STATUS_ENGAGED_OPLONG] = {0x00, 0xFF, 0xEE, 0x01},
+  [STATUS_ENGAGED_OPLONG] = {0x69, 0x69, 0x69, 0x01},
   [STATUS_WARNING] = {0xDA, 0x6F, 0x25, 0x01},
   [STATUS_ALERT] = {0xC9, 0x22, 0x31, 0xf1},
 };
@@ -482,7 +482,7 @@ static void ui_draw_vision_event(UIState *s) {
       nvgBeginPath(s->vg);
       nvgCircle(s->vg, bg_wheel_x, (bg_wheel_y + (bdr_s*1.5)), bg_wheel_size);
       if (is_oplong) {
-        nvgFillColor(s->vg, nvgRGBA(0, 255, 238, 255));
+        nvgFillColor(s->vg, nvgRGBA(105, 105, 105, 105));
       }
       else if (is_engaged) {
         nvgFillColor(s->vg, nvgRGBA(23, 134, 68, 255));
