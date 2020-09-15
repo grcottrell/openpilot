@@ -153,7 +153,7 @@ class RadarD():
 
     # if a new point, reset accel to the rest of the cluster
     for idx in range(len(track_pts)):
-      if self.tracks[idens[idx]].cnt < 1:
+      if self.tracks[idens[idx]].cnt <= 1:
         aLeadK = clusters[cluster_idxs[idx]].aLeadK
         aLeadTau = clusters[cluster_idxs[idx]].aLeadTau
         self.tracks[idens[idx]].reset_a_lead(aLeadK, aLeadTau)
@@ -167,7 +167,7 @@ class RadarD():
     dat.radarState.controlsStateMonoTime = sm.logMonoTime['controlsState']
 
     if has_radar:
-      dat.radarState.leadOne = get_lead(self.v_ego, self.ready, clusters, sm['model'].lead, low_speed_override=True)
+      dat.radarState.leadOne = get_lead(self.v_ego, self.ready, clusters, sm['model'].lead, low_speed_override=False)
       if not dat.radarState.leadOne.status:
         dat.radarState.leadOne.dRel = 150
         dat.radarState.leadOne.vRel = 50
