@@ -82,6 +82,7 @@ typedef enum UIStatus {
   STATUS_OFFROAD,
   STATUS_DISENGAGED,
   STATUS_ENGAGED,
+  STATUS_ENGAGED_OPLONG,
   STATUS_WARNING,
   STATUS_ALERT,
 } UIStatus;
@@ -90,6 +91,7 @@ static std::map<UIStatus, Color> bg_colors = {
   {STATUS_OFFROAD, {0x07, 0x23, 0x39}},
   {STATUS_DISENGAGED, {0x17, 0x33, 0x49}},
   {STATUS_ENGAGED, {0x17, 0x86, 0x44}},
+  {STATUS_ENGAGED_OPLONG, {0xFF, 0xEE, 0x44}},
   {STATUS_WARNING, {0xDA, 0x6F, 0x25}},
   {STATUS_ALERT, {0xC9, 0x22, 0x31}},
 };

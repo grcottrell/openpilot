@@ -27,6 +27,7 @@ const uint8_t alert_colors[][4] = {
   [STATUS_OFFROAD] = {0x07, 0x23, 0x39, 0xf1},
   [STATUS_DISENGAGED] = {0x17, 0x33, 0x49, 0xc8},
   [STATUS_ENGAGED] = {0x17, 0x86, 0x44, 0x01},
+  [STATUS_ENGAGED_OPLONG] = {0xFF, 0xEE, 0x44, 0x01},
   [STATUS_WARNING] = {0xDA, 0x6F, 0x25, 0x01},
   [STATUS_ALERT] = {0xC9, 0x22, 0x31, 0xf1},
 };
@@ -127,7 +128,12 @@ static void draw_lead(UIState *s, const cereal::RadarState::LeadData::Reader &le
     }
     fillAlpha = (int)(fmin(fillAlpha, 255));
   }
-  draw_chevron(s, d_rel, lead.getYRel(), 25, nvgRGBA(201, 34, 49, fillAlpha), COLOR_YELLOW);
+  if (s->longitudinal_control) {
+    draw_chevron(s, d_rel, lead.getYRel(), 25, nvgRGBA(201, 34, 49, fillAlpha), COLOR_YELLOW);
+  }
+  else {
+    draw_chevron(s, d_rel, lead.getYRel(), 25, nvgRGBA(165, 255, 135, fillAlpha), COLOR_GREEN);
+  }
 }
 
 static void ui_draw_lane_line(UIState *s, const model_path_vertices_data *pvd, NVGcolor color) {
@@ -463,6 +469,9 @@ static void ui_draw_vision_event(UIState *s) {
     const int bg_wheel_x = viz_event_x + (viz_event_w-bg_wheel_size);
     const int bg_wheel_y = viz_event_y + (bg_wheel_size/2);
     NVGcolor color = COLOR_BLACK_ALPHA(0);
+    if (s->status == STATUS_ENGAGED_OPLONG) {
+      color = nvgRGBA(255, 238, 68, 255);
+    }
     if (s->status == STATUS_ENGAGED) {
       color = nvgRGBA(23, 134, 68, 255);
     } else if (s->status == STATUS_WARNING) {
@@ -539,9 +548,11 @@ static void ui_draw_driver_view(UIState *s) {
 
 static void ui_draw_vision_brake(UIState *s) {
   const UIScene *scene = &s->scene;
+  s->scene.uilayout_sidebarcollapsed = true;
+  const Rect &viz_rect = s->scene.viz_rect;
   const int brake_size = 96;
-  const int brake_x = (scene->viz_rect.x + (brake_size * 3) + (bdr_s * 4));
-  const int brake_y = (scene->viz_rect.bottom() + ((footer_h - brake_size) / 2));
+  const int brake_x = (viz_rect.x + (brake_size * 3) + (bdr_s * 4));
+  const int brake_y = (viz_rect.bottom() + ((footer_h - brake_size) / 2));
   const int brake_img_size = (brake_size * 1.5);
   const int brake_img_x = (brake_x - (brake_img_size / 2));
   const int brake_img_y = (brake_y - (brake_size / 4));
