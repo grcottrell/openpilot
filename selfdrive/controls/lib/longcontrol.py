@@ -71,7 +71,8 @@ class LongControl():
     """Reset PID controller and change setpoint"""
     self.pid.reset()
     self.v_pid = v_pid
-    self.stop_timer = False
+    self.stop = False
+    self.stop_timer = 0
 
   def update(self, active, CS, v_target, v_target_future, a_target, CP, hasLead, radarState):
     """Update longitudinal control. This updates the state machine and runs a PID loop"""
@@ -86,16 +87,16 @@ class LongControl():
     else:
       dRel = radarState.leadOne.dRel
     if hasLead:
-      stop = True if (dRel < 5.0 and radarState.leadOne.status) else False
-      if stop:
+      self.stop = True if (dRel < 5.0 and radarState.leadOne.status) else False
+      if self.stop:
         self.stop_timer = 100
     elif self.stop_timer > 0:
       self.stop_timer -= 1
     else:
-      stop = False
+      self.stop = False
     self.long_control_state = long_control_state_trans(active, self.long_control_state, CS.vEgo,
                                                        v_target_future, self.v_pid, output_gb,
-                                                       CS.brakePressed, CS.standstill, stop)
+                                                       CS.brakePressed, CS.standstill, self.stop)
 
     v_ego_pid = max(CS.vEgo, MIN_CAN_SPEED)  # Without this we get jumps, CAN bus reports 0 when speed < 0.3
 
