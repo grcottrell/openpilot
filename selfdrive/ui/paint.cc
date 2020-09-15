@@ -408,6 +408,7 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 
 static void ui_draw_vision_speed(UIState *s) {
   const Rect &viz_rect = s->scene.viz_rect;
+  const UIScene *scene = &s->scene;
   float v_ego = s->scene.controls_state.getVEgo();
   float speed = v_ego * 2.2369363 + 0.5;
   if (s->is_metric){
@@ -779,9 +780,6 @@ static void bb_ui_draw_UI(UIState *s)
 //BB END: functions added for the display of various items
 
 static void ui_draw_vision_footer(UIState *s) {
-  nvgBeginPath(s->vg);
-  nvgRect(s->vg, s->scene.viz_rect.x, footer_y, s->scene.viz_rect.w, footer_h);
-
   ui_draw_vision_face(s);
   ui_draw_vision_brake(s);
   bb_ui_draw_UI(s);
