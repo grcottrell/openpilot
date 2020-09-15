@@ -551,7 +551,7 @@ static void ui_draw_vision_brake(UIState *s) {
   const Rect &viz_rect = s->scene.viz_rect;
   const int brake_size = 96;
   const int brake_x = (viz_rect.x + (brake_size * 3) + (bdr_s * 4));
-  const int brake_y = (viz_rect.w + ((footer_h - brake_size) / 2));
+  const int brake_y = (footer_y + ((footer_h - brake_size) / 2));
   const int brake_img_size = (brake_size * 1.5);
   const int brake_img_x = (brake_x - (brake_img_size / 2));
   const int brake_img_y = (brake_y - (brake_size / 4));
