@@ -153,7 +153,7 @@ class RadarD():
 
     # if a new point, reset accel to the rest of the cluster
     for idx in range(len(track_pts)):
-      if self.tracks[idens[idx]].cnt <= 1:
+      if self.tracks[idens[idx]].cnt < 1:
         aLeadK = clusters[cluster_idxs[idx]].aLeadK
         aLeadTau = clusters[cluster_idxs[idx]].aLeadTau
         self.tracks[idens[idx]].reset_a_lead(aLeadK, aLeadTau)
