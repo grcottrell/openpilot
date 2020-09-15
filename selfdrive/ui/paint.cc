@@ -476,7 +476,7 @@ static void ui_draw_vision_event(UIState *s) {
     bool is_engaged = (s->status == STATUS_ENGAGED) && !s->scene.steerOverride;
     bool is_warning = (s->status == STATUS_WARNING);
     bool is_engageable = s->scene.controls_state.getEngageable();
-    bool is_oplong = (s->status == STATUS_ENGAGED_OPLONG)
+    bool is_oplong = (s->status == STATUS_ENGAGED_OPLONG);
 
     if (is_engaged || is_warning || is_engageable) {
       nvgBeginPath(s->vg);
