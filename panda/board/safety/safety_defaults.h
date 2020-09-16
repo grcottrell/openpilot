@@ -1,6 +1,5 @@
-
-bool hyundai_community_non_scc_car = false;
-bool hyundai_community_mdps_harness_present = false;
+bool hyundai_community_non_scc_car = true;
+bool hyundai_community_mdps_harness_present = true;
 
 int default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   int bus = GET_BUS(to_push);
