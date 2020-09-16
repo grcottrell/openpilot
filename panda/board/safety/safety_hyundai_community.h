@@ -89,8 +89,6 @@ static uint8_t hyundai_community_compute_checksum(CAN_FIFOMailBox_TypeDef *to_pu
 bool aeb_cmd_act = false;
 int prev_desired_accel = 0;
 int decel_not_ramping =0;
-bool hyundai_community_mdps_harness_present = false;
-bool hyundai_community_non_scc_car = false;
 
 static int hyundai_community_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
