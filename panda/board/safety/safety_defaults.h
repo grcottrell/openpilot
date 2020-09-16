@@ -36,15 +36,27 @@ static int default_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
   UNUSED(to_fwd);
 
   int bus_fwd = -1;
-  if (hyundai_community_mdps_harness_present) {
-     if (bus_num == 0) {
-       bus_fwd = 1;
+  if (bus_num == 0) {
+     if (hyundai_community_mdps_harness_present) {
+       bus_fwd = 12;
      }
-     if (bus_num == 1) {
+     else
+     {
+       bus_fwd = 2;
+     }
+  }
+  if (bus_num == 1) {
+     if (hyundai_community_mdps_harness_present) {
        bus_fwd = 20;
      }
-     if (bus_num == 2) {
-       bus_fwd = 1;
+  }
+  if (bus_num == 2) {
+     if (hyundai_community_mdps_harness_present) {
+       bus_fwd = 10;
+     }
+     else
+     {
+       bus_fwd = 0;
      }
   }
   return bus_fwd;

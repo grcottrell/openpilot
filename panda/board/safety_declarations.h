@@ -107,7 +107,6 @@ bool hyundai_community_non_scc_car = true;
 bool hyundai_community_mdps_harness_present = true;
 
 
-
 // for safety modes with torque steering control
 int desired_torque_last = 0;       // last desired steer torque
 int rt_torque_last = 0;            // last desired torque for real time check
